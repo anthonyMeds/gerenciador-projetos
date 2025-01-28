@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/projeto")
 public class ProjetoController {
@@ -61,6 +63,18 @@ public class ProjetoController {
         DetalheProjetoDTO response = projetoService.buscarPorNome(nome);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Listar Projetos", description = "Busca projetos pelo nome da equipe, status ou todos os projetos caso nenhum filtro seja informado.")
+    @GetMapping("/buscarProjetos")
+    public ResponseEntity<List<DetalheProjetoDTO>> buscarProjetos(
+            @RequestParam(required = false) String nomeEquipe,
+            @RequestParam(required = false) String nomeStatus
+    ) throws ServiceException {
+        List<DetalheProjetoDTO> projetos = projetoService.buscarProjetos(nomeEquipe, nomeStatus);
+        return ResponseEntity.ok(projetos);
+    }
+
+
 
 
 }

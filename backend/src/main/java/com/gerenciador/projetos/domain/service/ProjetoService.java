@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -127,4 +128,35 @@ public class ProjetoService {
                 projeto.getStatus().getNome()
         );
     }
+
+    public List<DetalheProjetoDTO> buscarProjetos(String nomeEquipe, String nomeStatus) throws ServiceException {
+        List<Projeto> projetos;
+
+        if (nomeEquipe != null && nomeStatus != null) {
+            projetos = projetoRepository.findByEquipeNomeIgnoreCaseAndStatusNomeIgnoreCase(nomeEquipe.trim(), nomeStatus.trim().toUpperCase());
+        } else if (nomeEquipe != null) {
+            projetos = projetoRepository.findByEquipeNomeIgnoreCase(nomeEquipe.trim());
+        } else if (nomeStatus != null) {
+            projetos = projetoRepository.findByStatusNomeIgnoreCase(nomeStatus.trim());
+        } else {
+            projetos = projetoRepository.findAll();
+        }
+
+        if (projetos.isEmpty()) {
+            throw new ServiceException("Nenhum projeto encontrado com os filtros fornecidos.");
+        }
+
+        return projetos.stream()
+                .map(projeto -> new DetalheProjetoDTO(
+                        projeto.getId(),
+                        projeto.getNome(),
+                        projeto.getDescricao(),
+                        projeto.getDataInicio(),
+                        projeto.getDataFim(),
+                        projeto.getEquipe().getNome(),
+                        projeto.getStatus().getNome()
+                )).toList();
+    }
+
+
 }
