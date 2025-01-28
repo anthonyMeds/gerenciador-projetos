@@ -159,4 +159,21 @@ public class ProjetoService {
     }
 
 
+    public ProjetoResponseDTO deletarProjeto(Long id) throws ServiceException {
+
+        if (projetoRepository.findById(id).isEmpty()) {
+            throw new ServiceException("Projeto não cadastrado.");
+        }
+
+        try {
+            projetoRepository.deleteById(id);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new ServiceException("Não foi possível excluir o projeto.");
+        }
+
+
+        return new ProjetoResponseDTO(id, "Projeto deletado com sucesso.");
+
+    }
 }

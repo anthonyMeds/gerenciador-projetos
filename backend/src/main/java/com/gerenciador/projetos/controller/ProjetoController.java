@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,6 +73,13 @@ public class ProjetoController {
     ) throws ServiceException {
         List<DetalheProjetoDTO> projetos = projetoService.buscarProjetos(nomeEquipe, nomeStatus);
         return ResponseEntity.ok(projetos);
+    }
+
+    @Operation(summary = "Deletar Projeto", description = "Deleta o projeto pelo id.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProjetoResponseDTO> deletarProjeto(@PathVariable @NotNull Long id) throws ServiceException {
+        ProjetoResponseDTO response = projetoService.deletarProjeto(id);
+        return ResponseEntity.ok(response);
     }
 
 
