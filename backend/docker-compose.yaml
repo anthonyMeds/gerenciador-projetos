@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:8.0.31
     ports:
-      - "3307:3307"
+      - "3307:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
