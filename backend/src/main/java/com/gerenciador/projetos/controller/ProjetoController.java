@@ -1,5 +1,6 @@
 package com.gerenciador.projetos.controller;
 
+import com.gerenciador.projetos.DTO.DetalheProjetoDTO;
 import com.gerenciador.projetos.DTO.ProjetoRequestDTO;
 import com.gerenciador.projetos.DTO.ProjetoResponseDTO;
 import com.gerenciador.projetos.config.exception.ServiceException;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,5 +39,13 @@ public class ProjetoController {
         ProjetoResponseDTO response = projetoService.atualizarProjeto(projetoRequestDTO, id);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Detalhar Projeto", description = "Obtém os detalhes de um projeto pelo id.")
+    @GetMapping("/{id}")
+    public ResponseEntity<DetalheProjetoDTO> buscarDetalheProjeto(@PathVariable @NotNull Long id) throws ServiceException {
+        DetalheProjetoDTO response = projetoService.buscarDetalheProjeto(id);
+        return ResponseEntity.ok(response);
+    }
+
 
 }

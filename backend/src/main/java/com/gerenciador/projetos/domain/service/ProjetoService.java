@@ -1,5 +1,6 @@
 package com.gerenciador.projetos.domain.service;
 
+import com.gerenciador.projetos.DTO.DetalheProjetoDTO;
 import com.gerenciador.projetos.DTO.ProjetoRequestDTO;
 import com.gerenciador.projetos.DTO.ProjetoResponseDTO;
 import com.gerenciador.projetos.config.exception.ServiceException;
@@ -94,6 +95,22 @@ public class ProjetoService {
         }
 
         return new ProjetoResponseDTO(projeto.getId(), "Atualização realizada com sucesso");
+    }
+
+    public DetalheProjetoDTO buscarDetalheProjeto(Long idProjeto) throws ServiceException {
+
+        Projeto projeto = projetoRepository.findById(idProjeto)
+                .orElseThrow(() -> new ServiceException("Projeto não encontrado"));
+
+        return new DetalheProjetoDTO(
+                projeto.getId(),
+                projeto.getNome(),
+                projeto.getDescricao(),
+                projeto.getDataInicio(),
+                projeto.getDataFim(),
+                projeto.getEquipe().getNome(),
+                projeto.getStatus().getNome()
+        );
     }
 
 }
