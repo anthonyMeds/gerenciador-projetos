@@ -1,4 +1,4 @@
-package com.gerenciador.projetos.DTO;
+package com.gerenciador.projetos.DTO.projeto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
