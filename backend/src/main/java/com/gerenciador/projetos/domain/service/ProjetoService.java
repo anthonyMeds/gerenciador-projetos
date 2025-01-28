@@ -9,11 +9,14 @@ import com.gerenciador.projetos.domain.entity.Status;
 import com.gerenciador.projetos.domain.repository.EquipeRepository;
 import com.gerenciador.projetos.domain.repository.ProjetoRepository;
 import com.gerenciador.projetos.domain.repository.StatusRepository;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ProjetoService {
@@ -57,4 +60,40 @@ public class ProjetoService {
 
         return new ProjetoResponseDTO(projeto.getId(), "Cadastro realizado com sucesso");
     }
+
+    public ProjetoResponseDTO atualizarProjeto(ProjetoRequestDTO projetoRequestDTO, Long id) throws ServiceException {
+
+        Optional<Projeto> projetoOptional = projetoRepository.findById(id);
+
+        if (projetoOptional.isEmpty()) {
+            throw new ServiceException("Não foi encontrado um projeto com os dados informados.");
+        }
+
+        Projeto projeto = projetoOptional.get();
+
+        Optional<Projeto> projetoComMesmoNome = projetoRepository.findByNome(projetoRequestDTO.nome());
+        if (projetoComMesmoNome.isPresent() && !projetoComMesmoNome.get().getId().equals(id)) {
+            throw new ServiceException("Já existe um projeto com o nome informado.");
+        }
+
+        Equipe equipe = equipeRepository.findById(projetoRequestDTO.equipeId())
+                .orElseThrow(() -> new ServiceException("Equipe não encontrada"));
+
+        Status status = statusRepository.findById(projetoRequestDTO.statusId())
+                .orElseThrow(() -> new ServiceException("Status não encontrado"));
+
+        BeanUtils.copyProperties(projetoRequestDTO, projeto);
+        projeto.setEquipe(equipe);
+        projeto.setStatus(status);
+
+        try {
+            projetoRepository.save(projeto);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new ServiceException("Não foi possível atualizar o projeto.");
+        }
+
+        return new ProjetoResponseDTO(projeto.getId(), "Atualização realizada com sucesso");
+    }
+
 }
