@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/equipes")
+@RequestMapping("/equipes")
 @Tag(name = "Equipe", description = "Gerenciamento de Equipes")
 public class EquipeController {
 
