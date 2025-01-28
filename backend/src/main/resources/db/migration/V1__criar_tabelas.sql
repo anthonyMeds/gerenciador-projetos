@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS status (
 -- Criação da tabela de projetos
 CREATE TABLE IF NOT EXISTS projetos (
                                         id INT AUTO_INCREMENT PRIMARY KEY,
-                                        nome VARCHAR(100) NOT NULL,
-                                        descricao TEXT NOT NULL,
+                                        nome VARCHAR(100) NOT NULL UNIQUE ,
+                                        descricao VARCHAR(255) NOT NULL,
                                         data_inicio DATE NOT NULL,
                                         data_fim DATE,
                                         equipe_id INT NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS projetos (
 CREATE TABLE IF NOT EXISTS tarefas (
                                        id INT AUTO_INCREMENT PRIMARY KEY,
                                        titulo VARCHAR(100) NOT NULL,
-                                       descricao TEXT NOT NULL,
+                                       descricao VARCHAR(255) NOT NULL,
                                        projeto_id INT NOT NULL,
                                        responsavel VARCHAR(50) NOT NULL,
                                        prazo_dias INT NOT NULL,
