@@ -10,9 +10,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.time.LocalDate;
+
+@Data
 @Entity
 @Table(name = "projetos")
-@Data
 public class Projeto {
 
     @Id
@@ -26,10 +28,10 @@ public class Projeto {
     private String descricao;
 
     @Column(name = "data_inicio", nullable = false)
-    private String dataInicio;
+    private LocalDate dataInicio;
 
     @Column(name = "data_fim")
-    private String dataFim;
+    private LocalDate dataFim;
 
     @ManyToOne
     @JoinColumn(name = "equipe_id", nullable = false)
