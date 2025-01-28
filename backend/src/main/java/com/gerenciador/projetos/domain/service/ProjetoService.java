@@ -36,7 +36,7 @@ public class ProjetoService {
 
     public ProjetoResponseDTO cadastrarProjeto(ProjetoRequestDTO projetoRequestDTO) throws ServiceException {
 
-        if (projetoRepository.findByNome(projetoRequestDTO.nome()).isPresent()) {
+        if (projetoRepository.findByNomeIgnoreCase(projetoRequestDTO.nome()).isPresent()) {
             throw new ServiceException("Projeto já existente");
         }
 
@@ -72,7 +72,7 @@ public class ProjetoService {
 
         Projeto projeto = projetoOptional.get();
 
-        Optional<Projeto> projetoComMesmoNome = projetoRepository.findByNome(projetoRequestDTO.nome());
+        Optional<Projeto> projetoComMesmoNome = projetoRepository.findByNomeIgnoreCase(projetoRequestDTO.nome());
         if (projetoComMesmoNome.isPresent() && !projetoComMesmoNome.get().getId().equals(id)) {
             throw new ServiceException("Já existe um projeto com o nome informado.");
         }
@@ -113,4 +113,18 @@ public class ProjetoService {
         );
     }
 
+    public DetalheProjetoDTO buscarPorNome(String nome) throws ServiceException {
+        Projeto projeto = projetoRepository.findByNomeIgnoreCase(nome.trim())
+                .orElseThrow(() -> new ServiceException("Projeto não encontrado"));
+
+        return new DetalheProjetoDTO(
+                projeto.getId(),
+                projeto.getNome(),
+                projeto.getDescricao(),
+                projeto.getDataInicio(),
+                projeto.getDataFim(),
+                projeto.getEquipe().getNome(),
+                projeto.getStatus().getNome()
+        );
+    }
 }

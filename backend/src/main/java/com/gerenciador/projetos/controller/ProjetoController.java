@@ -6,8 +6,11 @@ import com.gerenciador.projetos.DTO.ProjetoResponseDTO;
 import com.gerenciador.projetos.config.exception.ServiceException;
 import com.gerenciador.projetos.domain.service.ProjetoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,6 +48,17 @@ public class ProjetoController {
     @GetMapping("/{id}")
     public ResponseEntity<DetalheProjetoDTO> buscarDetalheProjeto(@PathVariable @NotNull Long id) throws ServiceException {
         DetalheProjetoDTO response = projetoService.buscarDetalheProjeto(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Detalhar Projeto pelo nome", description = "Obtém os detalhes de um projeto pelo nome.")
+    @GetMapping("/buscarPorNome")
+    public ResponseEntity<DetalheProjetoDTO> buscarPorNome(
+            @Parameter(description = "Nome do projeto", example = "projeto xpto", required = true)
+            @RequestParam @NotBlank @Size(max = 100) String nome
+    ) throws ServiceException {
+
+        DetalheProjetoDTO response = projetoService.buscarPorNome(nome);
         return ResponseEntity.ok(response);
     }
 
