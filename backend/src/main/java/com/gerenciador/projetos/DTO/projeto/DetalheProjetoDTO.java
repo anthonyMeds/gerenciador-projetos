@@ -1,4 +1,4 @@
-package com.gerenciador.projetos.DTO;
+package com.gerenciador.projetos.DTO.projeto;
 
 import com.gerenciador.projetos.domain.entity.Equipe;
 import com.gerenciador.projetos.domain.entity.Status;

@@ -1,8 +1,8 @@
 package com.gerenciador.projetos.domain.service;
 
-import com.gerenciador.projetos.DTO.DetalheProjetoDTO;
-import com.gerenciador.projetos.DTO.ProjetoRequestDTO;
-import com.gerenciador.projetos.DTO.ProjetoResponseDTO;
+import com.gerenciador.projetos.DTO.projeto.DetalheProjetoDTO;
+import com.gerenciador.projetos.DTO.projeto.ProjetoRequestDTO;
+import com.gerenciador.projetos.DTO.projeto.ProjetoResponseDTO;
 import com.gerenciador.projetos.config.exception.ServiceException;
 import com.gerenciador.projetos.domain.entity.Equipe;
 import com.gerenciador.projetos.domain.entity.Projeto;
@@ -10,7 +10,6 @@ import com.gerenciador.projetos.domain.entity.Status;
 import com.gerenciador.projetos.domain.repository.EquipeRepository;
 import com.gerenciador.projetos.domain.repository.ProjetoRepository;
 import com.gerenciador.projetos.domain.repository.StatusRepository;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

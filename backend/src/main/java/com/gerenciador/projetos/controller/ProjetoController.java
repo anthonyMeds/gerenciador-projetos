@@ -1,12 +1,13 @@
 package com.gerenciador.projetos.controller;
 
-import com.gerenciador.projetos.DTO.DetalheProjetoDTO;
-import com.gerenciador.projetos.DTO.ProjetoRequestDTO;
-import com.gerenciador.projetos.DTO.ProjetoResponseDTO;
+import com.gerenciador.projetos.DTO.projeto.DetalheProjetoDTO;
+import com.gerenciador.projetos.DTO.projeto.ProjetoRequestDTO;
+import com.gerenciador.projetos.DTO.projeto.ProjetoResponseDTO;
 import com.gerenciador.projetos.config.exception.ServiceException;
 import com.gerenciador.projetos.domain.service.ProjetoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/projeto")
+@Tag(name = "Projeto", description = "Gerenciamento de Projetos")
 public class ProjetoController {
 
     @Autowired
