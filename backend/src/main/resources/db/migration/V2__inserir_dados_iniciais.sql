@@ -10,3 +10,10 @@ INSERT INTO status (nome) VALUES
                               ('Em execução'),
                               ('Abortado'),
                               ('Finalizado');
+
+
+INSERT INTO responsaveis (nome) VALUES
+                                    ('PLO'),
+                                    ('GFU'),
+                                    ('CTB'),
+                                    ('GBP');
