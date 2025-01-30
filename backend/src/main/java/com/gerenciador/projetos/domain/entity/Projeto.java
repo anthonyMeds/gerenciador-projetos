@@ -2,6 +2,8 @@ package com.gerenciador.projetos.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,12 +35,12 @@ public class Projeto {
     @Column(name = "data_fim")
     private LocalDate dataFim;
 
-    @ManyToOne
-    @JoinColumn(name = "equipe_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "equipe_id", nullable = false, foreignKey = @ForeignKey(name = "fk_equipe"))
     private Equipe equipe;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id", nullable = false, foreignKey = @ForeignKey(name = "fk_status"))
     private Status status;
 }
 
