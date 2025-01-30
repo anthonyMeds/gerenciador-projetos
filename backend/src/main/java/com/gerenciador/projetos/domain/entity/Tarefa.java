@@ -1,35 +1,45 @@
 package com.gerenciador.projetos.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "tarefas")
-@Data
 public class Tarefa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String titulo;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 255)
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "projeto_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projeto_id", nullable = false, foreignKey = @ForeignKey(name = "fk_projeto"))
     private Projeto projeto;
 
-    @Column(nullable = false)
-    private String responsavel;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsavel_id", nullable = false, foreignKey = @ForeignKey(name = "fk_tarefa_responsavel"))
+    private Responsavel responsavel;
 
     @Column(name = "prazo_dias", nullable = false)
     private Integer prazoDias;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id", nullable = false, foreignKey = @ForeignKey(name = "fk_tarefa_status"))
     private Status status;
 }
 
