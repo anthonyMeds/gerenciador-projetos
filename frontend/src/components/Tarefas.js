@@ -6,18 +6,20 @@ class Tarefas extends React.Component {
     super(props);
 
     this.state = {
-      tarefas: [
-        {
-          id: 1,
-          titulo: "teste ss",
-          descricao: "desc",
-          nomeProjeto: "nometeste",
-          nomeResponsavel: "resp",
-          prazoDias: "10",
-          statusNome: "Planejado",
-        },
-      ],
+      tarefas: [],
     };
+  }
+
+  componentDidMount() {
+    this.buscarTarefas();
+  }
+
+  buscarTarefas() {
+    fetch("http://localhost:8080/tarefas")
+      .then((resposta) => resposta.json())
+      .then((dados) => {
+        this.setState({ tarefas: dados });
+      });
   }
 
   render() {
