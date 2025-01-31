@@ -22,7 +22,12 @@ const TarefaForm = ({ show, onClose, onSubmit, tarefaData }) => {
       setResponsavelId(tarefaData.responsavelId || "");
       setPrazoDias(tarefaData.prazoDias || "");
       setStatusId(tarefaData.statusId || "");
-    } else {
+    }
+  }, [tarefaData]);
+
+  useEffect(() => {
+    if (!show) {
+      // Limpa os campos ao fechar o modal
       setTitulo("");
       setDescricao("");
       setProjetoId("");
@@ -30,7 +35,7 @@ const TarefaForm = ({ show, onClose, onSubmit, tarefaData }) => {
       setPrazoDias("");
       setStatusId("");
     }
-  }, [tarefaData]);
+  }, [show]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +59,7 @@ const TarefaForm = ({ show, onClose, onSubmit, tarefaData }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     onSubmit({
-      id: tarefaData?.id, // Certifica que o id é enviado ao atualizar
+      id: tarefaData?.id,
       titulo,
       descricao,
       projetoId: projetoId ? parseInt(projetoId) : null,

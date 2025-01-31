@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import TarefaForm from "./TarefaForm";
 import ToastNotification from "./ToastNotification";
 import apiService from "../services/apiService";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Container } from "react-bootstrap";
+import "./css/Tarefas.css";
 
 const Tarefas = () => {
   const [tarefas, setTarefas] = useState([]);
@@ -42,12 +43,15 @@ const Tarefas = () => {
         statusId: parseInt(tarefa.statusId) || null,
       };
 
+      if (!payload.titulo || !payload.descricao || !payload.projetoId || !payload.responsavelId || !payload.statusId) {
+        exibirToast("Preencha todos os campos.", true);
+        return;
+      }
+
       if (tarefa.id) {
-        // Atualizar tarefa existente
         await apiService.atualizarTarefa(tarefa.id, payload);
         exibirToast("Tarefa atualizada com sucesso");
       } else {
-        // Cadastrar nova tarefa
         await apiService.cadastrarTarefa(payload);
         exibirToast("Tarefa cadastrada com sucesso");
       }
@@ -74,51 +78,64 @@ const Tarefas = () => {
   };
 
   return (
-    <div>
-      <Button variant="primary" onClick={() => {
-        setTarefaAtual(null); // Limpar dados ao cadastrar nova tarefa
-        setShowModal(true);
-      }}>
+    <Container>
+      <Button
+        variant="primary"
+        className="my-3"
+        onClick={() => {
+          setTarefaAtual(null);
+          setShowModal(true);
+        }}
+      >
         Cadastrar Nova Tarefa
       </Button>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>Projeto</th>
-            <th>Responsável</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tarefas.length > 0 ? (
-            tarefas.map((tarefa) => (
-              <tr key={tarefa.id}>
-                <td>{tarefa.titulo}</td>
-                <td>{tarefa.descricao}</td>
-                <td>{tarefa.nomeProjeto}</td>
-                <td>{tarefa.nomeResponsavel}</td>
-                <td>{tarefa.statusNome}</td>
-                <td>
-                  <Button variant="warning" className="me-2" onClick={() => handleEditar(tarefa)}>
-                    Editar
-                  </Button>
-                  <Button variant="danger" onClick={() => handleExcluir(tarefa.id)}>
-                    Excluir
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-container">
+        <Table striped bordered hover responsive>
+          <thead>
             <tr>
-              <td colSpan="6">Não existem tarefas cadastradas</td>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Projeto</th>
+              <th>Responsável</th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {tarefas.length > 0 ? (
+              tarefas.map((tarefa) => (
+                <tr key={tarefa.id}>
+                  <td>{tarefa.titulo}</td>
+                  <td>{tarefa.descricao}</td>
+                  <td>{tarefa.nomeProjeto}</td>
+                  <td>{tarefa.nomeResponsavel}</td>
+                  <td>{tarefa.statusNome}</td>
+                  <td>
+                    <Button
+                      variant="warning"
+                      className="me-2"
+                      onClick={() => handleEditar(tarefa)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleExcluir(tarefa.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6">Não existem tarefas cadastradas</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
 
       <TarefaForm
         show={showModal}
@@ -132,7 +149,7 @@ const Tarefas = () => {
         isError={toastError}
         onClose={() => setShowToast(false)}
       />
-    </div>
+    </Container>
   );
 };
 
