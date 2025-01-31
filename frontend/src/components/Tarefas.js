@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Form, FormGroup, FormLabel, FormControl } from "react-bootstrap";
 
 class Tarefas extends React.Component {
   constructor(props) {
@@ -30,9 +30,9 @@ class Tarefas extends React.Component {
         }
       }
     );
-  }
+  };
 
-  render() {
+  renderTabela() {
     return (
       <Table striped bordered hover>
         <thead>
@@ -55,12 +55,65 @@ class Tarefas extends React.Component {
               <td> {tarefas.nomeResponsavel} </td>
               <td> {tarefas.prazoDias} </td>
               <td> {tarefas.statusNome} </td>
-              <td> Atualizar 
-                <Button variant="danger" onClick={() => this.deletarTarefas(tarefas.id)}>Excluir</Button> </td>
+              <td>
+                Atualizar
+                <Button
+                  variant="danger"
+                  onClick={() => this.deletarTarefas(tarefas.id)}
+                >
+                  Excluir
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        <Form>
+          <FormGroup className="mb-3">
+            <FormLabel>Título</FormLabel>
+            <FormControl type="text" placeholder="Insira o título da tarefa" />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <FormLabel>Descrição</FormLabel>
+            <FormControl
+              as="textarea"
+              rows={3}
+              placeholder="Descreva a tarefa"
+            />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <FormLabel>Nome do Projeto</FormLabel>
+            <FormControl type="text" placeholder="Informe o nome do projeto" />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <FormLabel>Responsável</FormLabel>
+            <FormControl type="text" placeholder="Quem será responsável?" />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <FormLabel>Prazo em dias</FormLabel>
+            <FormControl type="number" />
+          </FormGroup>
+          <FormGroup className="mb-3">
+            <FormLabel>Status</FormLabel>
+            <FormControl as="select">
+              <option>Pendente</option>
+              <option>Em Andamento</option>
+              <option>Concluída</option>
+            </FormControl>
+          </FormGroup>
+          <Button variant="primary" type="submit">
+            Salvar Tarefa
+          </Button>
+        </Form>
+
+        {this.renderTabela()}
+      </div>
     );
   }
 }
