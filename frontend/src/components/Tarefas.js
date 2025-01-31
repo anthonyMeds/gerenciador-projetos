@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 
 class Tarefas extends React.Component {
   constructor(props) {
@@ -20,6 +20,16 @@ class Tarefas extends React.Component {
       .then((dados) => {
         this.setState({ tarefas: dados });
       });
+  }
+
+  deletarTarefas = (id) => {
+    fetch("http://localhost:8080/tarefas/" + id, { method: "DELETE" }).then(
+      (resposta) => {
+        if (resposta.ok) {
+          this.buscarTarefas();
+        }
+      }
+    );
   }
 
   render() {
@@ -45,7 +55,8 @@ class Tarefas extends React.Component {
               <td> {tarefas.nomeResponsavel} </td>
               <td> {tarefas.prazoDias} </td>
               <td> {tarefas.statusNome} </td>
-              <td> Atualizar Excluir </td>
+              <td> Atualizar 
+                <Button variant="danger" onClick={() => this.deletarTarefas(tarefas.id)}>Excluir</Button> </td>
             </tr>
           ))}
         </tbody>
