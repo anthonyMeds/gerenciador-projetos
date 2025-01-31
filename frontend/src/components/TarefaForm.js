@@ -3,15 +3,34 @@ import { Form, FormGroup, FormLabel, FormControl, FormSelect, Button, Modal } fr
 import apiService from "../services/apiService";
 
 const TarefaForm = ({ show, onClose, onSubmit, tarefaData }) => {
-  const [titulo, setTitulo] = useState(tarefaData?.titulo || "");
-  const [descricao, setDescricao] = useState(tarefaData?.descricao || "");
-  const [projetoId, setProjetoId] = useState(tarefaData?.projetoId || "");
-  const [responsavelId, setResponsavelId] = useState(tarefaData?.responsavelId || "");
-  const [prazoDias, setPrazoDias] = useState(tarefaData?.prazoDias || "");
-  const [statusId, setStatusId] = useState(tarefaData?.statusId || "");
+  const [titulo, setTitulo] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [projetoId, setProjetoId] = useState("");
+  const [responsavelId, setResponsavelId] = useState("");
+  const [prazoDias, setPrazoDias] = useState("");
+  const [statusId, setStatusId] = useState("");
   const [projetos, setProjetos] = useState([]);
   const [responsaveis, setResponsaveis] = useState([]);
   const [statuses, setStatuses] = useState([]);
+
+  // Atualizar campos quando tarefaData mudar
+  useEffect(() => {
+    if (tarefaData) {
+      setTitulo(tarefaData.titulo || "");
+      setDescricao(tarefaData.descricao || "");
+      setProjetoId(tarefaData.projetoId || "");
+      setResponsavelId(tarefaData.responsavelId || "");
+      setPrazoDias(tarefaData.prazoDias || "");
+      setStatusId(tarefaData.statusId || "");
+    } else {
+      setTitulo("");
+      setDescricao("");
+      setProjetoId("");
+      setResponsavelId("");
+      setPrazoDias("");
+      setStatusId("");
+    }
+  }, [tarefaData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +54,7 @@ const TarefaForm = ({ show, onClose, onSubmit, tarefaData }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     onSubmit({
+      id: tarefaData?.id, // Certifica que o id é enviado ao atualizar
       titulo,
       descricao,
       projetoId: projetoId ? parseInt(projetoId) : null,

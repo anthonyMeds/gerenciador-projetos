@@ -10,6 +10,7 @@ const Tarefas = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastError, setToastError] = useState(false);
+  const [tarefaAtual, setTarefaAtual] = useState(null);
 
   useEffect(() => {
     buscarTarefas();
@@ -41,11 +42,17 @@ const Tarefas = () => {
         statusId: parseInt(tarefa.statusId) || null,
       };
 
-      console.log("Payload enviado:", payload);
-
-      await apiService.cadastrarTarefa(payload);
-      exibirToast("Tarefa cadastrada com sucesso");
+      if (tarefa.id) {
+        // Atualizar tarefa existente
+        await apiService.atualizarTarefa(tarefa.id, payload);
+        exibirToast("Tarefa atualizada com sucesso");
+      } else {
+        // Cadastrar nova tarefa
+        await apiService.cadastrarTarefa(payload);
+        exibirToast("Tarefa cadastrada com sucesso");
+      }
       buscarTarefas();
+      setShowModal(false);
     } catch (error) {
       exibirToast(error.message, true);
     }
@@ -61,9 +68,17 @@ const Tarefas = () => {
     }
   };
 
+  const handleEditar = (tarefa) => {
+    setTarefaAtual(tarefa);
+    setShowModal(true);
+  };
+
   return (
     <div>
-      <Button variant="primary" onClick={() => setShowModal(true)}>
+      <Button variant="primary" onClick={() => {
+        setTarefaAtual(null); // Limpar dados ao cadastrar nova tarefa
+        setShowModal(true);
+      }}>
         Cadastrar Nova Tarefa
       </Button>
 
@@ -86,8 +101,11 @@ const Tarefas = () => {
                 <td>{tarefa.descricao}</td>
                 <td>{tarefa.nomeProjeto}</td>
                 <td>{tarefa.nomeResponsavel}</td>
-                <td>{tarefa.statusId}</td>
+                <td>{tarefa.statusNome}</td>
                 <td>
+                  <Button variant="warning" className="me-2" onClick={() => handleEditar(tarefa)}>
+                    Editar
+                  </Button>
                   <Button variant="danger" onClick={() => handleExcluir(tarefa.id)}>
                     Excluir
                   </Button>
@@ -102,8 +120,18 @@ const Tarefas = () => {
         </tbody>
       </Table>
 
-      <TarefaForm show={showModal} onClose={() => setShowModal(false)} onSubmit={handleCadastrar} />
-      <ToastNotification show={showToast} message={toastMessage} isError={toastError} onClose={() => setShowToast(false)} />
+      <TarefaForm
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleCadastrar}
+        tarefaData={tarefaAtual}
+      />
+      <ToastNotification
+        show={showToast}
+        message={toastMessage}
+        isError={toastError}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
