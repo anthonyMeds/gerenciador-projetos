@@ -1,121 +1,111 @@
-import React from "react";
-import { Table, Button, Form, FormGroup, FormLabel, FormControl } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import TarefaForm from "./TarefaForm";
+import ToastNotification from "./ToastNotification";
+import apiService from "../services/apiService";
+import { Button, Table } from "react-bootstrap";
 
-class Tarefas extends React.Component {
-  constructor(props) {
-    super(props);
+const Tarefas = () => {
+  const [tarefas, setTarefas] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastError, setToastError] = useState(false);
 
-    this.state = {
-      tarefas: [],
-    };
-  }
+  useEffect(() => {
+    buscarTarefas();
+  }, []);
 
-  componentDidMount() {
-    this.buscarTarefas();
-  }
-
-  buscarTarefas() {
-    fetch("http://localhost:8080/tarefas")
-      .then((resposta) => resposta.json())
-      .then((dados) => {
-        this.setState({ tarefas: dados });
-      });
-  }
-
-  deletarTarefas = (id) => {
-    fetch("http://localhost:8080/tarefas/" + id, { method: "DELETE" }).then(
-      (resposta) => {
-        if (resposta.ok) {
-          this.buscarTarefas();
-        }
-      }
-    );
+  const buscarTarefas = async () => {
+    try {
+      const data = await apiService.buscarTarefas();
+      setTarefas(data);
+    } catch (error) {
+      exibirToast(error.message, true);
+    }
   };
 
-  renderTabela() {
-    return (
+  const exibirToast = (message, isError) => {
+    setToastMessage(message);
+    setToastError(isError);
+    setShowToast(true);
+  };
+
+  const handleCadastrar = async (tarefa) => {
+    try {
+      const payload = {
+        titulo: tarefa.titulo,
+        descricao: tarefa.descricao,
+        projetoId: parseInt(tarefa.projetoId) || null,
+        responsavelId: parseInt(tarefa.responsavelId) || null,
+        prazoDias: parseInt(tarefa.prazoDias) || null,
+        statusId: parseInt(tarefa.statusId) || null,
+      };
+
+      console.log("Payload enviado:", payload);
+
+      await apiService.cadastrarTarefa(payload);
+      exibirToast("Tarefa cadastrada com sucesso");
+      buscarTarefas();
+    } catch (error) {
+      exibirToast(error.message, true);
+    }
+  };
+
+  const handleExcluir = async (id) => {
+    try {
+      await apiService.excluirTarefa(id);
+      exibirToast("Tarefa excluída com sucesso");
+      buscarTarefas();
+    } catch (error) {
+      exibirToast(error.message, true);
+    }
+  };
+
+  return (
+    <div>
+      <Button variant="primary" onClick={() => setShowModal(true)}>
+        Cadastrar Nova Tarefa
+      </Button>
+
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Título</th>
             <th>Descrição</th>
-            <th>Nome do Projeto</th>
-            <th>Responsável da Tarefa</th>
-            <th>Prazo</th>
+            <th>Projeto</th>
+            <th>Responsável</th>
             <th>Status</th>
-            <th>Opções</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {this.state.tarefas.map((tarefas) => (
+          {tarefas.length > 0 ? (
+            tarefas.map((tarefa) => (
+              <tr key={tarefa.id}>
+                <td>{tarefa.titulo}</td>
+                <td>{tarefa.descricao}</td>
+                <td>{tarefa.nomeProjeto}</td>
+                <td>{tarefa.nomeResponsavel}</td>
+                <td>{tarefa.statusId}</td>
+                <td>
+                  <Button variant="danger" onClick={() => handleExcluir(tarefa.id)}>
+                    Excluir
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
             <tr>
-              <td> {tarefas.titulo} </td>
-              <td> {tarefas.descricao} </td>
-              <td> {tarefas.nomeProjeto} </td>
-              <td> {tarefas.nomeResponsavel} </td>
-              <td> {tarefas.prazoDias} </td>
-              <td> {tarefas.statusNome} </td>
-              <td>
-                Atualizar
-                <Button
-                  variant="danger"
-                  onClick={() => this.deletarTarefas(tarefas.id)}
-                >
-                  Excluir
-                </Button>
-              </td>
+              <td colSpan="6">Não existem tarefas cadastradas</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
-    );
-  }
 
-  render() {
-    return (
-      <div>
-        <Form>
-          <FormGroup className="mb-3">
-            <FormLabel>Título</FormLabel>
-            <FormControl type="text" placeholder="Insira o título da tarefa" />
-          </FormGroup>
-          <FormGroup className="mb-3">
-            <FormLabel>Descrição</FormLabel>
-            <FormControl
-              as="textarea"
-              rows={3}
-              placeholder="Descreva a tarefa"
-            />
-          </FormGroup>
-          <FormGroup className="mb-3">
-            <FormLabel>Nome do Projeto</FormLabel>
-            <FormControl type="text" placeholder="Informe o nome do projeto" />
-          </FormGroup>
-          <FormGroup className="mb-3">
-            <FormLabel>Responsável</FormLabel>
-            <FormControl type="text" placeholder="Quem será responsável?" />
-          </FormGroup>
-          <FormGroup className="mb-3">
-            <FormLabel>Prazo em dias</FormLabel>
-            <FormControl type="number" />
-          </FormGroup>
-          <FormGroup className="mb-3">
-            <FormLabel>Status</FormLabel>
-            <FormControl as="select">
-              <option>Pendente</option>
-              <option>Em Andamento</option>
-              <option>Concluída</option>
-            </FormControl>
-          </FormGroup>
-          <Button variant="primary" type="submit">
-            Salvar Tarefa
-          </Button>
-        </Form>
-
-        {this.renderTabela()}
-      </div>
-    );
-  }
-}
+      <TarefaForm show={showModal} onClose={() => setShowModal(false)} onSubmit={handleCadastrar} />
+      <ToastNotification show={showToast} message={toastMessage} isError={toastError} onClose={() => setShowToast(false)} />
+    </div>
+  );
+};
 
 export default Tarefas;

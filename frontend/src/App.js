@@ -4,13 +4,11 @@ import Tarefas from "./components/Tarefas";
 import Projetos from "./components/Projetos";
 import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
 import { Nav } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
     <div className="App">
-      <p>teste</p>
-
       <BrowserRouter>
         <Nav variant="tabs">
           <Nav.Link as={Link} to="/">
