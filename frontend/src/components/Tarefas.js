@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import TarefaForm from "./TarefaForm";
 import ToastNotification from "./ToastNotification";
 import apiService from "../services/apiService";
-import { Button, Table, Container, FormControl } from "react-bootstrap";
+import { Button, Table, Container, Form, FormControl, FormSelect } from "react-bootstrap";
 import "./css/Tarefas.css";
 
 const Tarefas = () => {
@@ -14,6 +14,7 @@ const Tarefas = () => {
   const [toastError, setToastError] = useState(false);
   const [tarefaAtual, setTarefaAtual] = useState(null);
   const [termoBusca, setTermoBusca] = useState("");
+  const [criterioBusca, setCriterioBusca] = useState("titulo");
 
   useEffect(() => {
     buscarTarefas();
@@ -21,7 +22,7 @@ const Tarefas = () => {
 
   useEffect(() => {
     filtrarTarefas();
-  }, [termoBusca, tarefas]);
+  }, [termoBusca, criterioBusca, tarefas]);
 
   const buscarTarefas = async () => {
     try {
@@ -34,9 +35,10 @@ const Tarefas = () => {
   };
 
   const filtrarTarefas = () => {
-    const filtro = tarefas.filter((tarefa) =>
-      tarefa.titulo.toLowerCase().includes(termoBusca.toLowerCase())
-    );
+    const filtro = tarefas.filter((tarefa) => {
+      const valorComparacao = String(tarefa[criterioBusca]?.toLowerCase() || "");
+      return valorComparacao.includes(termoBusca.toLowerCase());
+    });
     setTarefasFiltradas(filtro);
   };
 
@@ -104,13 +106,25 @@ const Tarefas = () => {
         Cadastrar Nova Tarefa
       </Button>
 
-      <FormControl
-        type="text"
-        placeholder="Pesquisar por título"
-        className="mb-3"
-        value={termoBusca}
-        onChange={(e) => setTermoBusca(e.target.value)}
-      />
+      <Form className="mb-3">
+        <FormSelect
+          className="mb-2"
+          value={criterioBusca}
+          onChange={(e) => setCriterioBusca(e.target.value)}
+        >
+          <option value="titulo">Título</option>
+          <option value="statusNome">Status</option>
+          <option value="nomeResponsavel">Responsável</option>
+          <option value="nomeProjeto">Projeto</option>
+        </FormSelect>
+
+        <FormControl
+          type="text"
+          placeholder={`Pesquisar por ${criterioBusca}`}
+          value={termoBusca}
+          onChange={(e) => setTermoBusca(e.target.value)}
+        />
+      </Form>
 
       <div className="table-container">
         <Table striped bordered hover responsive>
