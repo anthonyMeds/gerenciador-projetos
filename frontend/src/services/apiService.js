@@ -25,6 +25,12 @@ const apiService = {
     return response.json();
   },
 
+  buscarEquipes: async () => {
+    const response = await fetch(`${BASE_URL}/equipes`);
+    if (!response.ok) throw new Error("Erro ao buscar equipes");
+    return response.json();
+  },
+
   cadastrarTarefa: async (tarefa) => {
     const response = await fetch(`${BASE_URL}/tarefas`, {
       method: "POST",

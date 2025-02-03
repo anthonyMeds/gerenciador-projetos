@@ -3,7 +3,7 @@ import ProjetoForm from "./ProjetoForm";
 import ToastNotification from "./ToastNotification";
 import apiService from "../services/apiService";
 import { Button, Table, Container, Form, FormControl } from "react-bootstrap";
-import "./css/Tarefas.css";
+import "../components/css/Tarefas.css";
 
 const Projetos = () => {
   const [projetos, setProjetos] = useState([]);
@@ -34,9 +34,13 @@ const Projetos = () => {
   };
 
   const filtrarProjetos = () => {
-    const filtro = projetos.filter((projeto) =>
-      projeto.nome.toLowerCase().includes(termoBusca.toLowerCase())
-    );
+    const filtro = projetos.filter((projeto) => {
+      return (
+        projeto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+        projeto.equipe?.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+        projeto.status?.nome.toLowerCase().includes(termoBusca.toLowerCase())
+      );
+    });
     setProjetosFiltrados(filtro);
   };
 
@@ -48,16 +52,25 @@ const Projetos = () => {
 
   const handleCadastrar = async (projeto) => {
     try {
-      if (!projeto.nome || !projeto.descricao) {
-        exibirToast("Preencha todos os campos.", true);
+      const payload = {
+        nome: projeto.nome,
+        descricao: projeto.descricao,
+        dataInicio: projeto.dataInicio,
+        dataFim: projeto.dataFim,
+        statusId: projeto.statusId,
+        equipeId: projeto.equipeId,
+      };
+
+      if (!payload.nome || !payload.descricao || !payload.statusId || !payload.equipeId) {
+        exibirToast("Preencha todos os campos obrigatórios.", true);
         return;
       }
 
       if (projeto.id) {
-        await apiService.atualizarProjeto(projeto.id, projeto);
+        await apiService.atualizarProjeto(projeto.id, payload);
         exibirToast("Projeto atualizado com sucesso");
       } else {
-        await apiService.cadastrarProjeto(projeto);
+        await apiService.cadastrarProjeto(payload);
         exibirToast("Projeto cadastrado com sucesso");
       }
       buscarProjetos();
@@ -98,7 +111,7 @@ const Projetos = () => {
       <Form className="mb-3">
         <FormControl
           type="text"
-          placeholder="Pesquisar por nome"
+          placeholder="Pesquisar projetos"
           value={termoBusca}
           onChange={(e) => setTermoBusca(e.target.value)}
         />
@@ -111,7 +124,7 @@ const Projetos = () => {
               <th>Nome</th>
               <th>Descrição</th>
               <th>Data de Início</th>
-              <th>Data de Conclusão</th>
+              <th>Data de Fim</th>
               <th>Status</th>
               <th>Equipe</th>
               <th>Ações</th>

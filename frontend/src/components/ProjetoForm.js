@@ -2,47 +2,64 @@ import React, { useEffect, useState } from "react";
 import { Form, FormGroup, FormLabel, FormControl, Button, Modal } from "react-bootstrap";
 import apiService from "../services/apiService";
 
+const formatarDataParaBackend = (dataISO) => {
+  if (!dataISO) return null;
+  const data = new Date(dataISO);
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const ano = data.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+};
+
+const formatarDataParaFrontEnd = (data) => {
+  if (!data) return '';
+  const [dia, mes, ano] = data.split('/');
+  return `${ano}-${mes}-${dia}`;  // formato yyyy-mm-dd
+};
+
 const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setdataFim] = useState("");
-  const [status, setStatus] = useState("");
-  const [equipe, setEquipe] = useState("");
-  const [statusList, setStatusList] = useState([]);
-  const [equipeList, setEquipeList] = useState([]);
+  const [dataFim, setDataFim] = useState("");
+  const [statusId, setStatusId] = useState("");
+  const [equipeId, setEquipeId] = useState("");
+  const [statuses, setStatuses] = useState([]);
+  const [equipes, setEquipes] = useState([]);
 
   useEffect(() => {
-    carregarDadosProjeto();
+    if (projetoData) {
+      setNome(projetoData.nome || "");
+      setDescricao(projetoData.descricao || "");
+      setDataInicio(formatarDataParaFrontEnd(projetoData.dataInicio) || "");
+      setDataFim(formatarDataParaFrontEnd(projetoData.dataFim) || "");
+      setStatusId(projetoData.statusId || "");
+      setEquipeId(projetoData.equipeId || "");
+    }
   }, [projetoData]);
 
   useEffect(() => {
     if (show) {
-      carregarCombos();
+      buscarStatuses();
+      buscarEquipes();
     }
   }, [show]);
 
-  const carregarDadosProjeto = () => {
-    if (projetoData) {
-      setNome(projetoData.nome || "");
-      setDescricao(projetoData.descricao || "");
-      setDataInicio(projetoData.dataInicio || "");
-      setdataFim(projetoData.dataFim || "");
-      setStatus(projetoData.nomeStatus || "");
-      setEquipe(projetoData.nomeEquipe || "");
+  const buscarStatuses = async () => {
+    try {
+      const data = await apiService.buscarStatuses();
+      setStatuses(data);
+    } catch (error) {
+      console.error("Erro ao carregar statuses:", error);
     }
   };
 
-  const carregarCombos = async () => {
+  const buscarEquipes = async () => {
     try {
-      const [statuses, equipes] = await Promise.all([
-        apiService.buscarStatuses(),
-        apiService.buscarEquipes(),
-      ]);
-      setStatusList(statuses);
-      setEquipeList(equipes);
+      const data = await apiService.buscarEquipes();
+      setEquipes(data);
     } catch (error) {
-      console.error("Erro ao carregar dados:", error.message);
+      console.error("Erro ao carregar equipes:", error);
     }
   };
 
@@ -52,10 +69,10 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
       id: projetoData?.id,
       nome,
       descricao,
-      dataInicio,
-      dataFim,
-      status,
-      equipe,
+      dataInicio: formatarDataParaBackend(dataInicio),
+      dataFim: formatarDataParaBackend(dataFim),
+      statusId,
+      equipeId,
     });
   };
 
@@ -68,30 +85,50 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
         <Form onSubmit={handleSubmit}>
           <FormGroup className="mb-3">
             <FormLabel>Nome</FormLabel>
-            <FormControl value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do Projeto" />
+            <FormControl
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Nome do Projeto"
+            />
           </FormGroup>
 
           <FormGroup className="mb-3">
             <FormLabel>Descrição</FormLabel>
-            <FormControl value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição" />
+            <FormControl
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="Descrição do Projeto"
+            />
           </FormGroup>
 
           <FormGroup className="mb-3">
             <FormLabel>Data de Início</FormLabel>
-            <FormControl type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+            <FormControl
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+            />
           </FormGroup>
 
           <FormGroup className="mb-3">
-            <FormLabel>Data de Conclusão</FormLabel>
-            <FormControl type="date" value={dataFim} onChange={(e) => setdataFim(e.target.value)} />
+            <FormLabel>Data de Fim</FormLabel>
+            <FormControl
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+            />
           </FormGroup>
 
           <FormGroup className="mb-3">
             <FormLabel>Status</FormLabel>
-            <FormControl as="select" value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="">Selecione um Status</option>
-              {statusList.map((status) => (
-                <option key={status.id} value={status.nome}>
+            <FormControl
+              as="select"
+              value={statusId}
+              onChange={(e) => setStatusId(e.target.value)}
+            >
+              <option value="">Selecione um status</option>
+              {statuses.map((status) => (
+                <option key={status.id} value={status.id}>
                   {status.nome}
                 </option>
               ))}
@@ -100,10 +137,14 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
 
           <FormGroup className="mb-3">
             <FormLabel>Equipe</FormLabel>
-            <FormControl as="select" value={equipe} onChange={(e) => setEquipe(e.target.value)}>
-              <option value="">Selecione uma Equipe</option>
-              {equipeList.map((equipe) => (
-                <option key={equipe.id} value={equipe.nome}>
+            <FormControl
+              as="select"
+              value={equipeId}
+              onChange={(e) => setEquipeId(e.target.value)}
+            >
+              <option value="">Selecione uma equipe</option>
+              {equipes.map((equipe) => (
+                <option key={equipe.id} value={equipe.id}>
                   {equipe.nome}
                 </option>
               ))}
