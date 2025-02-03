@@ -2,14 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Form, FormGroup, FormLabel, FormControl, Button, Modal } from "react-bootstrap";
 import apiService from "../services/apiService";
 
-const formatarDataParaBackend = (dataISO) => {
-  if (!dataISO) return null;
-  const data = new Date(dataISO);
-  const dia = String(data.getDate()).padStart(2, "0");
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-  const ano = data.getFullYear();
-  return `${dia}/${mes}/${ano}`;
-};
+
+  
 
 const formatarDataParaFrontEnd = (data) => {
   if (!data) return '';
@@ -69,8 +63,8 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
       id: projetoData?.id,
       nome,
       descricao,
-      dataInicio: formatarDataParaBackend(dataInicio),
-      dataFim: formatarDataParaBackend(dataFim),
+      dataInicio: dataInicio,
+      dataFim: dataFim,
       statusId,
       equipeId,
     });

@@ -62,7 +62,7 @@ const apiService = {
   },
 
   cadastrarProjeto: async (projeto) => {
-    const response = await fetch(`${BASE_URL}/projetos`, {
+    const response = await fetch(`${BASE_URL}/projeto`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(projeto),
@@ -77,7 +77,7 @@ const apiService = {
   
 
   atualizarProjeto: async (id, projeto) => {
-    const response = await fetch(`${BASE_URL}/projetos/${id}`, {
+    const response = await fetch(`${BASE_URL}/projeto/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(projeto),
@@ -87,7 +87,7 @@ const apiService = {
   },
 
   excluirProjeto: async (id) => {
-    const response = await fetch(`${BASE_URL}/projetos/${id}`, { method: "DELETE" });
+    const response = await fetch(`${BASE_URL}/projeto/${id}`, { method: "DELETE" });
     if (!response.ok) throw new Error("Erro ao excluir projeto");
   },
 };
