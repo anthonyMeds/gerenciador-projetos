@@ -12,6 +12,9 @@ As tecnologias usadas para o projeto foram:
 A documentação Swagger da aplicação está disponível em:
 [Swagger UI](http://localhost:8080/swagger-ui/index.html#/)
 
+![image](https://github.com/user-attachments/assets/3cbc2a1b-9b3b-4b14-9a91-ead1fd10235d)
+
+
 ## Requisitos
 
 Para rodar o projeto, você precisará ter instalado:
