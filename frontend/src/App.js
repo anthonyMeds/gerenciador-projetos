@@ -19,6 +19,10 @@ function App() {
         </Nav>
 
         <Routes>
+        <Route
+            path="/"
+            element={<Tarefas />}
+          ></Route>
           <Route
             path="/frontend/src/components/Tarefas"
             element={<Tarefas />}

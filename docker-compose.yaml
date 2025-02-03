@@ -1,0 +1,50 @@
+version: '3.1'
+
+services:
+  # Banco de Dados MySQL
+  db:
+    image: mysql:8.0.31
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gerenciador-projetos
+    restart: always
+    container_name: db-mysql
+
+  # phpMyAdmin para visualização do banco
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8000:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+    container_name: phpmyadmin-service
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gerenciador-projetos
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - db
+    container_name: backend-service
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    container_name: frontend-service
