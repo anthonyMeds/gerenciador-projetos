@@ -113,6 +113,7 @@ const Projetos = () => {
               <th>Data de Início</th>
               <th>Data de Conclusão</th>
               <th>Status</th>
+              <th>Equipe</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -125,6 +126,7 @@ const Projetos = () => {
                   <td>{projeto.dataInicio}</td>
                   <td>{projeto.dataFim}</td>
                   <td>{projeto.nomeStatus}</td>
+                  <td>{projeto.nomeEquipe}</td>
                   <td>
                     <Button
                       variant="warning"
@@ -144,7 +146,7 @@ const Projetos = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6">Não existem projetos cadastrados</td>
+                <td colSpan="7">Não existem projetos cadastrados</td>
               </tr>
             )}
           </tbody>
