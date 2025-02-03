@@ -123,8 +123,8 @@ const Projetos = () => {
                   <td>{projeto.nome}</td>
                   <td>{projeto.descricao}</td>
                   <td>{projeto.dataInicio}</td>
-                  <td>{projeto.dataConclusao}</td>
-                  <td>{projeto.status}</td>
+                  <td>{projeto.dataFim}</td>
+                  <td>{projeto.nomeStatus}</td>
                   <td>
                     <Button
                       variant="warning"

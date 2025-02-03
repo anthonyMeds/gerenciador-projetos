@@ -54,6 +54,36 @@ const apiService = {
     const response = await fetch(`${BASE_URL}/tarefas/${id}`, { method: "DELETE" });
     if (!response.ok) throw new Error("Erro ao excluir tarefa");
   },
+
+  cadastrarProjeto: async (projeto) => {
+    const response = await fetch(`${BASE_URL}/projetos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(projeto),
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Erro ao cadastrar projeto");
+    }
+    return response.json();
+  },
+  
+
+  atualizarProjeto: async (id, projeto) => {
+    const response = await fetch(`${BASE_URL}/projetos/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(projeto),
+    });
+    if (!response.ok) throw new Error("Erro ao atualizar projeto");
+    return response.json();
+  },
+
+  excluirProjeto: async (id) => {
+    const response = await fetch(`${BASE_URL}/projetos/${id}`, { method: "DELETE" });
+    if (!response.ok) throw new Error("Erro ao excluir projeto");
+  },
 };
 
 export default apiService;
