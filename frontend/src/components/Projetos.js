@@ -37,8 +37,8 @@ const Projetos = () => {
     const filtro = projetos.filter((projeto) => {
       return (
         projeto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        projeto.equipe?.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        projeto.status?.nome.toLowerCase().includes(termoBusca.toLowerCase())
+        (projeto.equipe && projeto.equipe.nome.toLowerCase().includes(termoBusca.toLowerCase())) ||
+        (projeto.status && projeto.status.nome.toLowerCase().includes(termoBusca.toLowerCase()))
       );
     });
     setProjetosFiltrados(filtro);

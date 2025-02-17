@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Form, FormGroup, FormLabel, FormControl, Button, Modal } from "react-bootstrap";
 import apiService from "../services/apiService";
 
-
-  
-
+// Converte data do formato dd/mm/yyyy (do back) para yyyy-mm-dd (para o input date)
 const formatarDataParaFrontEnd = (data) => {
-  if (!data) return '';
-  const [dia, mes, ano] = data.split('/');
-  return `${ano}-${mes}-${dia}`;  // formato yyyy-mm-dd
+  if (!data) return "";
+  const [dia, mes, ano] = data.split("/");
+  return `${ano}-${mes}-${dia}`;
+};
+
+// Converte data do formato yyyy-mm-dd (input date) para dd/mm/yyyy (para o backend)
+const formatarDataParaBackend = (data) => {
+  if (!data) return "";
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
 };
 
 const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
@@ -25,10 +30,19 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
     if (projetoData) {
       setNome(projetoData.nome || "");
       setDescricao(projetoData.descricao || "");
-      setDataInicio(formatarDataParaFrontEnd(projetoData.dataInicio) || "");
-      setDataFim(formatarDataParaFrontEnd(projetoData.dataFim) || "");
+      // Se as datas já vierem no formato dd/mm/yyyy, converte para yyyy-mm-dd para o input date
+      setDataInicio(projetoData.dataInicio ? formatarDataParaFrontEnd(projetoData.dataInicio) : "");
+      setDataFim(projetoData.dataFim ? formatarDataParaFrontEnd(projetoData.dataFim) : "");
       setStatusId(projetoData.statusId || "");
       setEquipeId(projetoData.equipeId || "");
+    } else {
+      // Limpa os campos se não houver projeto a editar
+      setNome("");
+      setDescricao("");
+      setDataInicio("");
+      setDataFim("");
+      setStatusId("");
+      setEquipeId("");
     }
   }, [projetoData]);
 
@@ -63,8 +77,9 @@ const ProjetoForm = ({ show, onClose, onSubmit, projetoData }) => {
       id: projetoData?.id,
       nome,
       descricao,
-      dataInicio: dataInicio,
-      dataFim: dataFim,
+      // Converte as datas para o formato esperado pelo backend (dd/mm/yyyy)
+      dataInicio: formatarDataParaBackend(dataInicio),
+      dataFim: formatarDataParaBackend(dataFim),
       statusId,
       equipeId,
     });
