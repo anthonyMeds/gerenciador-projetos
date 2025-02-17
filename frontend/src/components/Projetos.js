@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProjetoForm from "./ProjetoForm";
 import ToastNotification from "./ToastNotification";
 import apiService from "../services/apiService";
-import { Button, Table, Container, Form, FormControl } from "react-bootstrap";
+import { Button, Table, Container, Form, FormControl, FormSelect } from "react-bootstrap";
 import "../components/css/Tarefas.css";
 
 const Projetos = () => {
@@ -14,6 +14,8 @@ const Projetos = () => {
   const [toastError, setToastError] = useState(false);
   const [projetoAtual, setProjetoAtual] = useState(null);
   const [termoBusca, setTermoBusca] = useState("");
+  // Estado para definir o critério de busca: "nome", "nomeStatus" ou "nomeEquipe"
+  const [criterioBusca, setCriterioBusca] = useState("nome");
 
   useEffect(() => {
     buscarProjetos();
@@ -21,7 +23,7 @@ const Projetos = () => {
 
   useEffect(() => {
     filtrarProjetos();
-  }, [termoBusca, projetos]);
+  }, [termoBusca, criterioBusca, projetos]);
 
   const buscarProjetos = async () => {
     try {
@@ -35,11 +37,9 @@ const Projetos = () => {
 
   const filtrarProjetos = () => {
     const filtro = projetos.filter((projeto) => {
-      return (
-        projeto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        (projeto.equipe && projeto.equipe.nome.toLowerCase().includes(termoBusca.toLowerCase())) ||
-        (projeto.status && projeto.status.nome.toLowerCase().includes(termoBusca.toLowerCase()))
-      );
+      // Usa o critério selecionado para comparar os valores (transformados para minúsculas)
+      const valorComparacao = String(projeto[criterioBusca] || "").toLowerCase();
+      return valorComparacao.includes(termoBusca.toLowerCase());
     });
     setProjetosFiltrados(filtro);
   };
@@ -109,9 +109,19 @@ const Projetos = () => {
       </Button>
 
       <Form className="mb-3">
+        <FormSelect
+          className="mb-2"
+          value={criterioBusca}
+          onChange={(e) => setCriterioBusca(e.target.value)}
+        >
+          <option value="nome">Nome</option>
+          <option value="nomeStatus">Status</option>
+          <option value="nomeEquipe">Equipe</option>
+        </FormSelect>
+
         <FormControl
           type="text"
-          placeholder="Pesquisar projetos"
+          placeholder={`Pesquisar por ${criterioBusca}`}
           value={termoBusca}
           onChange={(e) => setTermoBusca(e.target.value)}
         />
