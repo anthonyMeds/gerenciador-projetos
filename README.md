@@ -31,12 +31,16 @@ Para rodar o projeto, você precisará ter instalado:
    git clone https://github.com/anthonyMeds/gerenciador-projetos
 
 2. Suba o Docker Compose do banco de dados:
+
+```sh
 cd gerenciador-projetos/backend
 docker-compose up -d
+```
 
 2. Suba a aplicação:
 cd gerenciador-projetos/backend
 ./mvnw spring-boot:run
+
 
 
 ----- 
@@ -55,6 +59,3 @@ FRONTEND
 http://localhost:3000/
 
 
-
-APIs Disponíveis
-As APIs disponíveis são para CRUD de tarefas e projetos.
